@@ -1,0 +1,82 @@
+---
+import Lace from './Lace.astro';
+
+const promises = [
+  { icon: '/images/icons/title-heart.svg', size: [30, 30], title: 'Handmade in Amsterdam', text: 'Every piece is made by hand' },
+  { icon: '/images/icons/sparkle-rose.svg', size: [28, 28], title: 'Safe checkout', text: 'Buy via Depop' },
+  { icon: '/images/wish-star.svg', size: [40, 34], title: 'Customs welcome', text: 'Make a wish: your own colours or theme' },
+];
+---
+
+<section class="promises" aria-label="Why shop here">
+  <Lace scallop="var(--white)" dot="var(--blush)" />
+  <ul class="container list">
+    {
+      promises.map((p) => (
+        <li>
+          <span class="icon">
+            <img src={p.icon} alt="" width={p.size[0]} height={p.size[1]} />
+          </span>
+          <span class="text">
+            <strong>{p.title}</strong>
+            <span>{p.text}</span>
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .promises {
+    background: var(--blush);
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px;
+    margin-block: 0;
+    padding-top: 36px;
+    padding-bottom: 48px;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 14px;
+    color: var(--soft);
+  }
+
+  .text strong {
+    font-size: 18px;
+    color: var(--cocoa);
+  }
+
+  @media (max-width: 900px) {
+    .list {
+      flex-direction: column;
+    }
+  }
+</style>
