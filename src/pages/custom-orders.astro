@@ -1,0 +1,485 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Lace from '../components/Lace.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import StepCards from '../components/StepCards.astro';
+import WishForm from '../components/WishForm.astro';
+import { site } from '../data/site';
+
+const steps = [
+  { title: 'Tell me your idea', text: 'Send your wish with colours, theme and pictures. Anything helps.' },
+  { title: 'Design & materials', text: 'We talk about the design together and I work out which materials are needed.' },
+  { title: 'Estimate & materials', text: 'You get an estimate of the total price. Material costs are paid up front, before I start.' },
+  { title: 'Made & sent', text: 'I make your treasure by hand and send it to you.' },
+];
+
+const priceGroups = [
+  {
+    title: 'Accessories',
+    icon: { src: '/images/placeholders/necklace.svg', size: 34 },
+    rows: [
+      { name: 'Jewellery', note: 'Necklaces, bracelets, earrings', price: '€ 5 – 60' },
+      { name: 'Hair accessories', note: 'Bows, clips and more', price: '€ 5 – 50' },
+    ],
+  },
+  {
+    title: 'Clothing',
+    icon: { src: '/images/placeholders/skirt.svg', size: 32 },
+    rows: [
+      { name: 'Blouse', price: '€ 25 – 150' },
+      { name: 'Skirt', price: '€ 39 – 200' },
+      { name: 'Dress', price: '€ 80 – 300' },
+    ],
+  },
+];
+
+const goodToKnow = [
+  'I reply within [invullen] days',
+  'You get an estimate before anything is made',
+  'Material costs are paid up front',
+  'Clothing? Add your measurements',
+  'Every wish is made by hand, so it is one of a kind',
+];
+
+const faq = [
+  {
+    q: 'How long does a custom order take?',
+    a: 'It depends on the design and the materials. You hear the expected time together with your estimate: [invullen].',
+  },
+  { q: 'Can I change my design later?', a: '[invullen]' },
+  { q: 'Do you ship outside the Netherlands?', a: '[invullen]' },
+  { q: 'Can I pick up my order at a pop-up?', a: '[invullen]' },
+];
+---
+
+<Layout
+  title="Custom orders"
+  description="Jewellery, hair accessories or clothing in your colours, your theme and your size. Make a wish and Sakura makes it for you."
+  footerLace="var(--blush)"
+>
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="pill pill--white">Customs are open</span>
+      <img class="star" src="/images/wish-star.svg" alt="" width="170" height="146" />
+      <h1>
+        <span class="script hero-script">Make a wish</span>
+        <span class="hero-title">Custom orders</span>
+      </h1>
+      <p class="hero-text">
+        Jewellery, hair accessories or clothing in your colours, your theme and your size. Dream it up and I make it for
+        you.
+      </p>
+      <div class="buttons">
+        <a class="btn btn--primary btn--lg" href="#wish-form">Start your wish</a>
+        <a class="btn btn--lg" href="#prices">See prices</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="how-title">
+    <Lace scallop="var(--petal)" dot="var(--white)" />
+    <div class="container stack">
+      <SectionTitle id="how-title" script="Step by step" title="How it works" icon="heart" />
+      <StepCards steps={steps} />
+    </div>
+  </section>
+
+  <section class="prices" id="prices" aria-labelledby="prices-title">
+    <Lace scallop="var(--white)" dot="var(--blush)" />
+    <div class="container stack">
+      <SectionTitle id="prices-title" script="Price guide" title="What does a wish cost?" icon="bow" />
+      <div class="price-groups">
+        {
+          priceGroups.map((group) => (
+            <div class="card price-card">
+              <h3 class="price-head">
+                <span class="price-icon">
+                  <img src={group.icon.src} alt="" width={group.icon.size} height={group.icon.size} />
+                </span>
+                <span class="script">{group.title}</span>
+              </h3>
+              <dl>
+                {group.rows.map((row) => (
+                  <div class="price-row">
+                    <dt>
+                      <span class="row-name">{row.name}</span>
+                      {row.note && <span class="row-note">{row.note}</span>}
+                    </dt>
+                    <dd>{row.price}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+      <p class="price-note">
+        <img src="/images/icons/heart.svg" alt="" width="14" height="14" />
+        The final price depends on your design and the materials. You always get an estimate first.
+      </p>
+    </div>
+  </section>
+
+  <section class="wish-form" id="wish-form" aria-labelledby="form-title">
+    <Lace scallop="var(--blush)" dot="var(--cream)" />
+    <div class="container stack">
+      <SectionTitle id="form-title" script="Your wish" title="Start your custom order" icon="heart" />
+      <div class="form-layout">
+        <WishForm />
+        <aside class="good-to-know">
+          <div class="card info-card">
+            <h3 class="script">Good to know</h3>
+            <ul class="hearts">
+              {goodToKnow.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="card info-card questions">
+            <h3>Questions first?</h3>
+            <p>Send me an email or a DM on TikTok: {site.tiktok.handle}</p>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faq-title">
+    <Lace scallop="var(--cream)" dot="var(--blush)" />
+    <div class="container stack">
+      <SectionTitle id="faq-title" script="Questions" title="Frequently asked" icon="bow" />
+      <div class="accordion">
+        {
+          faq.map((item, i) => (
+            <details open={i === 0}>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    background: var(--petal) url('/images/sparkles-bg.svg') no-repeat center top / 1440px auto;
+  }
+
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-top: 48px;
+    padding-bottom: 72px;
+    text-align: center;
+  }
+
+  .star {
+    margin-top: 4px;
+  }
+
+  h1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .hero-script {
+    font-size: 88px;
+    line-height: 1.1;
+  }
+
+  .hero-title {
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.2;
+  }
+
+  .hero-text {
+    max-width: 620px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 8px;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+  }
+
+  .how {
+    background: var(--white);
+  }
+
+  .prices {
+    background: var(--blush);
+  }
+
+  .price-groups {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 24px;
+    width: 100%;
+  }
+
+  .price-card {
+    padding: 24px 32px 28px;
+    border-radius: 28px;
+  }
+
+  .price-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .price-head .script {
+    font-size: 40px;
+  }
+
+  .price-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-pill);
+    background: var(--blush);
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1.5px solid var(--pink);
+  }
+
+  .price-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  dt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .row-name {
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .row-note {
+    font-size: 14px;
+    color: var(--soft);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--rose);
+    white-space: nowrap;
+  }
+
+  .price-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .wish-form {
+    background: var(--cream);
+  }
+
+  .form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 740px) minmax(0, 428px);
+    align-items: start;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .good-to-know {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .info-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 28px;
+    border-radius: 28px;
+  }
+
+  .info-card .script {
+    font-size: 40px;
+  }
+
+  .questions {
+    background: var(--blush);
+    border-color: var(--blush);
+  }
+
+  .questions h3 {
+    font-weight: 700;
+    font-size: 22px;
+  }
+
+  .questions p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--soft);
+  }
+
+  .questions a {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--rose);
+  }
+
+  .hearts {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .hearts li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .hearts li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    transform: translateY(2px);
+    background: url('/images/icons/heart.svg') no-repeat center / contain;
+  }
+
+  .faq {
+    background: var(--blush);
+  }
+
+  .accordion {
+    width: min(100%, 800px);
+  }
+
+  details {
+    border-bottom: 1.5px solid var(--pink-d);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    font-weight: 700;
+    font-size: 20px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    font-family: system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--rose);
+  }
+
+  details[open] summary::after {
+    content: '–';
+  }
+
+  details p {
+    padding-bottom: 18px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1000px) {
+    .price-groups,
+    .form-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-script {
+      font-size: 64px;
+    }
+
+    .hero-title {
+      font-size: 30px;
+    }
+
+    .hero-text {
+      font-size: 16px;
+    }
+
+    .star {
+      width: 120px;
+      height: auto;
+    }
+
+    .stack {
+      padding-top: 40px;
+      padding-bottom: 56px;
+    }
+
+    .price-card,
+    .info-card {
+      padding: 20px;
+    }
+
+    summary {
+      font-size: 17px;
+    }
+  }
+</style>
