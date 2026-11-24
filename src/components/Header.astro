@@ -42,7 +42,7 @@ const isActive = (href: string) => {
     </nav>
 
     <div class="right">
-      <div class="lang hide-sm" role="group" aria-label="Language">
+      <div class="lang" role="group" aria-label="Language">
         <span class="lang-option is-active" aria-current="true">EN</span>
         <span class="lang-option" title="Dutch version coming soon" aria-disabled="true">NL</span>
       </div>
@@ -53,8 +53,8 @@ const isActive = (href: string) => {
         <img src="/images/icons/tiktok.svg" alt="TikTok" width="20" height="20" />
       </a>
       <button class="icon-btn menu-toggle" type="button" aria-controls="site-nav" aria-expanded="false">
-        <span class="visually-hidden">Menu</span>
         <span class="burger" aria-hidden="true"></span>
+        <span class="menu-label">Menu</span>
       </button>
     </div>
   </div>
@@ -181,6 +181,15 @@ const isActive = (href: string) => {
 
   .menu-toggle {
     display: none;
+    gap: 10px;
+  }
+
+  .menu-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
   }
 
   .burger,
@@ -240,27 +249,81 @@ const isActive = (href: string) => {
     }
   }
 
+  /* Phone: menu button left, logo in the middle, language switch right. */
   @media (max-width: 640px) {
     .hide-sm {
       display: none;
     }
 
     .main-bar {
-      gap: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-areas:
+        'menu brand lang'
+        'nav nav nav';
+      gap: 8px 12px;
       padding: 10px 16px;
     }
 
+    .right {
+      display: contents;
+    }
+
     .brand {
-      gap: 8px;
+      grid-area: brand;
     }
 
     .brand img {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
     }
 
     .brand-name {
-      font-size: 26px;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .menu-toggle {
+      grid-area: menu;
+      justify-self: start;
+      width: auto;
+      padding: 0 16px 0 14px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .menu-label {
+      position: static;
+      width: auto;
+      height: auto;
+      clip: auto;
+    }
+
+    .burger,
+    .burger::before,
+    .burger::after {
+      width: 14px;
+      background: var(--cocoa);
+    }
+
+    .burger::before {
+      top: -5px;
+    }
+
+    .burger::after {
+      top: 5px;
+    }
+
+    .lang {
+      grid-area: lang;
+      justify-self: end;
+    }
+
+    .nav {
+      grid-area: nav;
     }
   }
 </style>
