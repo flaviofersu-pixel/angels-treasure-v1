@@ -1,0 +1,329 @@
+---
+// Custom order request form. Posts to /api/wish (a Cloudflare Worker route that
+// mails Sakura, see ADR 0007). On success the visitor goes to /thank-you/.
+import { site } from '../data/site';
+
+const kinds = ['Jewellery', 'Hair accessory', 'Clothing', 'Something else'];
+const budgets = ['€ 5 – 60', '€ 60 – 100', '€ 100 – 200', '€ 200 – 300', 'Not sure yet'];
+---
+
+<form class="card form" method="post" action="/api/wish" enctype="multipart/form-data" data-wish-form novalidate>
+  <div class="row">
+    <label class="field">
+      <span class="label">Your name</span>
+      <input name="name" type="text" autocomplete="name" placeholder="Name" required />
+    </label>
+    <label class="field">
+      <span class="label">Email</span>
+      <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+    </label>
+  </div>
+
+  <div class="row">
+    <label class="field">
+      <span class="label">Instagram or TikTok <span class="optional">(optional)</span></span>
+      <input name="social" type="text" placeholder="@yourname" />
+    </label>
+    <label class="field">
+      <span class="label">When do you need it? <span class="optional">(optional)</span></span>
+      <input name="date" type="date" />
+    </label>
+  </div>
+
+  <fieldset class="field kinds">
+    <legend class="label">What would you like?</legend>
+    <div class="chips">
+      {
+        kinds.map((kind, i) => (
+          <label>
+            <input class="visually-hidden" type="radio" name="kind" value={kind} checked={i === 0} />
+            <span class="chip">{kind}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <label class="field">
+    <span class="label">Tell me about your wish</span>
+    <textarea name="wish" rows="5" placeholder="Colours, theme, size, details…" required></textarea>
+  </label>
+
+  <div class="row">
+    <label class="field">
+      <span class="label">Budget</span>
+      <select name="budget">
+        {budgets.map((budget) => <option>{budget}</option>)}
+      </select>
+    </label>
+    <label class="field">
+      <span class="label">Clothing size <span class="optional">(optional)</span></span>
+      <input name="size" type="text" placeholder="Measurements if you order clothing" />
+    </label>
+  </div>
+
+  <label class="upload">
+    <input class="visually-hidden" type="file" name="pictures" accept="image/*" multiple data-upload />
+    <img src="/images/icons/sparkle-rose.svg" alt="" width="26" height="26" />
+    <span class="upload-title">Drop pictures here or <u>browse</u></span>
+    <span class="upload-hint" data-upload-hint>Inspiration, sketches or colours (max 5)</span>
+  </label>
+
+  <!-- Spam trap: people never see or fill this field. -->
+  <label class="trap" aria-hidden="true">
+    Leave this empty
+    <input type="text" name="website" tabindex="-1" autocomplete="off" />
+  </label>
+
+  <label class="consent">
+    <input type="checkbox" name="consent" required />
+    <span>I understand that material costs are paid before Sakura starts</span>
+  </label>
+
+  <p class="error" role="alert" data-error hidden></p>
+
+  <div>
+    <button class="btn btn--primary btn--lg" type="submit">Send my wish</button>
+  </div>
+
+  <p class="privacy">
+    Your details are only used to reply to your wish. See <a href="/terms/#privacy">privacy</a>.
+  </p>
+</form>
+
+<script define:vars={{ email: site.email }}>
+  const form = document.querySelector('[data-wish-form]');
+  if (form) {
+    const error = form.querySelector('[data-error]');
+    const upload = form.querySelector('[data-upload]');
+    const hint = form.querySelector('[data-upload-hint]');
+    const dropzone = upload.closest('.upload');
+    const MAX_FILES = 5;
+
+    const showError = (html) => {
+      error.innerHTML = html;
+      error.hidden = false;
+    };
+
+    const describeFiles = () => {
+      const count = upload.files.length;
+      if (count > MAX_FILES) {
+        showError(`Please pick up to ${MAX_FILES} pictures.`);
+        upload.value = '';
+        hint.textContent = 'Inspiration, sketches or colours (max 5)';
+        return;
+      }
+      error.hidden = true;
+      hint.textContent = count ? `${count} picture${count > 1 ? 's' : ''} added` : 'Inspiration, sketches or colours (max 5)';
+    };
+
+    upload.addEventListener('change', describeFiles);
+    ['dragenter', 'dragover'].forEach((type) =>
+      dropzone.addEventListener(type, (event) => {
+        event.preventDefault();
+        dropzone.classList.add('is-dragging');
+      }),
+    );
+    ['dragleave', 'drop'].forEach((type) =>
+      dropzone.addEventListener(type, () => dropzone.classList.remove('is-dragging')),
+    );
+    dropzone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      upload.files = event.dataTransfer.files;
+      describeFiles();
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      error.hidden = true;
+
+      if (!form.checkValidity()) {
+        const first = form.querySelector(':invalid');
+        first?.focus();
+        showError('Please fill in your name, email and wish, and tick the box about material costs.');
+        return;
+      }
+
+      const button = form.querySelector('[type="submit"]');
+      button.disabled = true;
+      button.textContent = 'Sending…';
+
+      try {
+        const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        if (!response.ok) throw new Error(String(response.status));
+        window.location.href = '/thank-you/';
+      } catch {
+        showError(
+          `Sorry, your wish could not be sent. Please try again, or email it to <a href="mailto:${email}">${email}</a>.`,
+        );
+        button.disabled = false;
+        button.textContent = 'Send my wish';
+      }
+    });
+  }
+</script>
+
+<style>
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 32px 34px;
+    border-radius: 28px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .label {
+    padding: 0;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .optional {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  input:not([type='radio'], [type='checkbox'], [type='file']),
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--pink);
+    border-radius: 16px;
+    background: var(--cream);
+    font-size: 16px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--soft);
+    opacity: 0.8;
+  }
+
+  select {
+    appearance: none;
+    padding-right: 44px;
+    background: var(--cream) url('/images/icons/chevron-down.svg') no-repeat right 16px center / 16px;
+    cursor: pointer;
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px rgb(169 70 119 / 0.15);
+  }
+
+  .kinds legend {
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 22px 16px;
+    border: 1.5px dashed var(--pink-d);
+    border-radius: 20px;
+    background: var(--cream);
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .upload:hover,
+  .upload.is-dragging,
+  .upload:focus-within {
+    background: var(--blush);
+  }
+
+  .upload-title {
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .upload-title u {
+    color: var(--rose);
+  }
+
+  .upload-hint {
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  .trap {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.45;
+    cursor: pointer;
+  }
+
+  .consent input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--rose);
+  }
+
+  .error {
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: var(--blush);
+    color: var(--rose);
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .privacy {
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  @media (max-width: 640px) {
+    .form {
+      padding: 22px 18px;
+    }
+
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
