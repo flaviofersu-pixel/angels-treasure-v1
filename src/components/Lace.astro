@@ -1,0 +1,31 @@
+---
+// Scalloped lace edge that sits at the top of a section.
+// `scallop` is usually the background colour of the section above,
+// `dot` is the little hole in each scallop.
+interface Props {
+  scallop?: string;
+  dot?: string;
+}
+
+const { scallop = 'var(--white)', dot = 'var(--blush)' } = Astro.props;
+const id = `lace-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg class="lace" aria-hidden="true" focusable="false" width="100%" height="12">
+  <defs>
+    <pattern id={id} width="24" height="12" patternUnits="userSpaceOnUse">
+      <path d="M0 0a12 12 0 0 0 24 0Z" fill={scallop}></path>
+      <circle cx="12" cy="4.5" r="2.2" fill={dot}></circle>
+    </pattern>
+  </defs>
+  <rect width="100%" height="12" fill={`url(#${id})`}></rect>
+</svg>
+
+<style>
+  .lace {
+    display: block;
+    width: 100%;
+    height: 12px;
+    position: relative;
+  }
+</style>

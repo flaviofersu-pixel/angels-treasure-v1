@@ -1,0 +1,192 @@
+---
+import Lace from './Lace.astro';
+import { site } from '../data/site';
+
+interface Props {
+  // Background colour of the section above, so the lace edge blends in.
+  laceColor?: string;
+}
+
+const { laceColor = 'var(--white)' } = Astro.props;
+const year = new Date().getFullYear();
+
+const shopLinks = [
+  { label: 'All treasures', href: '/shop/' },
+  { label: 'New releases', href: '/shop/?category=new' },
+  { label: 'Jewellery', href: '/shop/?category=jewellery' },
+  { label: 'Hair bows & clips', href: '/shop/?category=hair' },
+  { label: 'Clothing', href: '/shop/?category=clothing' },
+];
+
+const helpLinks = [
+  { label: 'Custom orders', href: '/custom-orders/' },
+  { label: 'Shipping & returns', href: '/terms/#shipping' },
+  { label: 'Terms & privacy', href: '/terms/' },
+];
+---
+
+<footer class="site-footer">
+  <Lace scallop={laceColor} dot="var(--blush)" />
+  <div class="columns">
+    <div class="brand-col">
+      <a class="brand" href="/">
+        <img src="/images/logo.png" alt="" width="56" height="56" />
+        <span class="brand-name">{site.name}</span>
+      </a>
+      <p class="tagline">Little treasures for your Jfashion coord. Handmade by Sakura in Amsterdam.</p>
+    </div>
+
+    <nav class="link-col" aria-label="Shop">
+      <h2 class="col-title">Shop</h2>
+      <ul>{shopLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+    </nav>
+
+    <nav class="link-col" aria-label="Help">
+      <h2 class="col-title">Help</h2>
+      <ul>{helpLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+    </nav>
+
+    <div class="link-col contact">
+      <h2 class="col-title">Contact</h2>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="social" href={site.instagram.url} target="_blank" rel="noopener">
+        <span class="icon-btn"><img src="/images/icons/instagram.svg" alt="" width="20" height="20" /></span>
+        <span class="handle">{site.instagram.handle}<span class="visually-hidden"> on Instagram</span></span>
+      </a>
+      <a class="social" href={site.tiktok.url} target="_blank" rel="noopener">
+        <span class="icon-btn"><img src="/images/icons/tiktok.svg" alt="" width="20" height="20" /></span>
+        <span class="handle">{site.tiktok.handle}<span class="visually-hidden"> on TikTok</span></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <p>© {year} {site.name} · KvK {site.kvk}</p>
+    <p>Buy safely via Depop</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--blush);
+  }
+
+  .columns {
+    display: flex;
+    gap: 64px;
+    padding: 36px 48px;
+  }
+
+  .brand-col {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .brand-name {
+    font-family: var(--font-script);
+    font-size: 40px;
+    line-height: 1.1;
+    color: var(--rose);
+    white-space: nowrap;
+  }
+
+  .tagline {
+    max-width: 360px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .link-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .link-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .link-col a {
+    text-decoration: none;
+  }
+
+  .link-col a:hover {
+    text-decoration: underline;
+  }
+
+  .col-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.68px;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .contact {
+    gap: 8px;
+  }
+
+  .social {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .social:hover {
+    text-decoration: none !important;
+  }
+
+  .handle {
+    font-size: 14px;
+    color: var(--soft);
+  }
+
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 48px 18px;
+    border-top: 1.5px solid var(--pink);
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  @media (max-width: 900px) {
+    .columns {
+      flex-wrap: wrap;
+      gap: 32px 48px;
+      padding: 32px 24px;
+    }
+
+    .brand-col {
+      flex-basis: 100%;
+    }
+
+    .bottom {
+      flex-direction: column;
+      padding-inline: 24px;
+    }
+  }
+</style>

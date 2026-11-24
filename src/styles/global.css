@@ -137,3 +137,196 @@ textarea {
     animation: none !important;
   }
 }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 22px;
+  border: 1.5px solid var(--pink-d);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--cocoa);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--blush);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background: var(--pink);
+}
+
+.btn--primary:hover {
+  background: var(--pink-d);
+}
+
+.btn--lg {
+  font-size: 16px;
+}
+
+.btn--sm {
+  padding: 7px 13px;
+  font-size: 14px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn .arrow {
+  font-family: system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.btn[aria-disabled='true'] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Round icon button (socials, slider arrows) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--pink);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--blush);
+}
+
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Small uppercase label, e.g. NEW or SOLD OUT */
+.pill {
+  display: inline-flex;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--pink);
+  color: var(--cocoa);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.32px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pill--white {
+  background: var(--white);
+}
+
+.pill--blush {
+  background: var(--blush);
+}
+
+.pill--dark {
+  background: var(--cocoa);
+  color: var(--white);
+}
+
+/* Outlined tag, e.g. "Since July 2022" */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1.5px solid var(--pink);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tag img {
+  width: 12px;
+  height: 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Selectable chip: filters, slider tabs, product options */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 18px;
+  border: 1.5px solid var(--pink);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--cocoa);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.chip:hover {
+  background: var(--blush);
+}
+
+.chip.is-active,
+.chip[aria-pressed='true'],
+.chip[aria-selected='true'],
+input:checked + .chip {
+  border-color: var(--pink-d);
+  background: var(--pink);
+  font-weight: 700;
+}
+
+input:focus-visible + .chip {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+/* Round numbered badge used in step cards */
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--pink-d);
+  border-radius: var(--radius-pill);
+  background: var(--pink);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* White card with pink border */
+.card {
+  border: 2px solid var(--pink);
+  border-radius: 24px;
+  background: var(--white);
+}

@@ -1,0 +1,266 @@
+---
+import { mainNav, site } from '../data/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => {
+  const base = href.split(/[?#]/)[0];
+  return base !== '/' && path.startsWith(base) && !href.includes('?');
+};
+---
+
+<header class="site-header">
+  <div class="top-bar">
+    <span>Handmade in Amsterdam</span>
+    <img src="/images/icons/heart.svg" alt="" width="11" height="11" />
+    <span>Customs are open</span>
+    <img class="hide-sm" src="/images/icons/heart.svg" alt="" width="11" height="11" />
+    <span class="hide-sm">Ships from the Netherlands</span>
+  </div>
+
+  <div class="main-bar">
+    <a class="brand" href="/" aria-label={`${site.name}, home`}>
+      <img src="/images/logo.png" alt="" width="60" height="60" />
+      <span class="brand-name">{site.name}</span>
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <ul>
+        {
+          mainNav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={['nav-link', { 'is-active': isActive(item.href) }]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language">
+        <span class="lang-option is-active" aria-current="true">EN</span>
+        <span class="lang-option" title="Dutch version coming soon" aria-disabled="true">NL</span>
+      </div>
+      <a class="icon-btn hide-sm" href={site.instagram.url} target="_blank" rel="noopener">
+        <img src="/images/icons/instagram.svg" alt="Instagram" width="20" height="20" />
+      </a>
+      <a class="icon-btn hide-sm" href={site.tiktok.url} target="_blank" rel="noopener">
+        <img src="/images/icons/tiktok.svg" alt="TikTok" width="20" height="20" />
+      </a>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="site-nav" aria-expanded="false">
+        <span class="visually-hidden">Menu</span>
+        <span class="burger" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const nav = document.getElementById('site-nav');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+</script>
+
+<style>
+  .site-header {
+    background: var(--white);
+    position: relative;
+    z-index: 10;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 8px 16px;
+    background: var(--blush);
+    font-weight: 500;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .main-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 48px;
+    border-bottom: 1.5px solid var(--pink);
+  }
+
+  .brand {
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .brand-name {
+    font-family: var(--font-script);
+    font-size: 34px;
+    line-height: 1.1;
+    color: var(--rose);
+    white-space: nowrap;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 9px 14px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+  }
+
+  .nav-link:hover {
+    background: var(--blush);
+  }
+
+  .nav-link.is-active {
+    border-color: var(--pink);
+    background: var(--blush);
+    color: var(--rose);
+  }
+
+  .right {
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .lang {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+  }
+
+  .lang-option {
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  .lang-option.is-active {
+    background: var(--pink);
+    color: var(--cocoa);
+    font-weight: 700;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  .burger,
+  .burger::before,
+  .burger::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--rose);
+    position: relative;
+  }
+
+  .burger::before,
+  .burger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .burger::before {
+    top: -6px;
+  }
+
+  .burger::after {
+    top: 6px;
+  }
+
+  @media (max-width: 1100px) {
+    .main-bar {
+      flex-wrap: wrap;
+      padding: 12px 24px;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    .nav {
+      display: none;
+      order: 3;
+      width: 100%;
+    }
+
+    .nav.is-open {
+      display: block;
+    }
+
+    .nav ul {
+      flex-direction: column;
+      padding-bottom: 8px;
+    }
+
+    .nav-link {
+      font-size: 17px;
+      padding: 12px 16px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hide-sm {
+      display: none;
+    }
+
+    .main-bar {
+      gap: 12px;
+      padding: 10px 16px;
+    }
+
+    .brand {
+      gap: 8px;
+    }
+
+    .brand img {
+      width: 44px;
+      height: 44px;
+    }
+
+    .brand-name {
+      font-size: 28px;
+    }
+  }
+</style>
