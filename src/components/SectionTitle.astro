@@ -1,0 +1,88 @@
+---
+// Icon + script line + bold heading, used above most sections.
+interface Props {
+  script: string;
+  title: string;
+  icon?: 'heart' | 'bow' | 'none';
+  align?: 'center' | 'left';
+  // White plate behind the title, for sections with a pattern background
+  plate?: boolean;
+  size?: 'md' | 'lg';
+  as?: 'h1' | 'h2';
+  id?: string;
+}
+
+const { script, title, icon = 'heart', align = 'center', plate = false, size = 'md', as: Tag = 'h2', id } = Astro.props;
+---
+
+<div class:list={['section-title', `align-${align}`, `size-${size}`, { plate }]}>
+  {icon === 'heart' && <img src="/images/icons/title-heart.svg" alt="" width="44" height="44" />}
+  {icon === 'bow' && <img src="/images/icons/title-bow.svg" alt="" width="64" height="44" />}
+  <Tag id={id}>
+    <span class="script line-script">{script}</span>
+    <span class="line-title">{title}</span>
+  </Tag>
+</div>
+
+<style>
+  .section-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .align-left {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .plate {
+    width: fit-content;
+    padding: 12px 30px 16px;
+    border-radius: 24px;
+    background: var(--white);
+  }
+
+  .align-center.plate {
+    margin-inline: auto;
+  }
+
+  h1,
+  h2 {
+    display: flex;
+    flex-direction: column;
+    align-items: inherit;
+    margin: 0;
+    font-weight: inherit;
+  }
+
+  .line-script {
+    font-size: 44px;
+  }
+
+  .line-title {
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.2;
+  }
+
+  .size-lg .line-title {
+    font-size: 44px;
+  }
+
+  @media (max-width: 640px) {
+    .line-script {
+      font-size: 36px;
+    }
+
+    .line-title,
+    .size-lg .line-title {
+      font-size: 28px;
+    }
+
+    .plate {
+      padding: 10px 20px 14px;
+    }
+  }
+</style>

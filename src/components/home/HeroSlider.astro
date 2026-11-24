@@ -1,0 +1,406 @@
+---
+import Lace from '../Lace.astro';
+import ProductImage from '../ProductImage.astro';
+import { slides } from '../../data/home';
+---
+
+<section class="hero" aria-roledescription="carousel" aria-label="Highlights" data-slider>
+  <div class="banner pattern-dots">
+    <Lace scallop="var(--white)" dot="var(--blush)" />
+    <div class="container banner-inner">
+      {
+        slides.map((slide, i) => (
+          <div
+            class="slide"
+            id={`slide-${i}`}
+            role="tabpanel"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${slides.length}`}
+            hidden={i !== 0}
+            data-slide
+          >
+            <div class="slide-text">
+              <div class="slide-meta">
+                <span class="pill pill--white">{slide.pill}</span>
+                <span class="counter">
+                  Slide {i + 1} of {slides.length}
+                </span>
+              </div>
+              {i === 0 ? (
+                <h1 class="slide-title">
+                  <span class="script">{slide.script}</span>
+                  <span class="bold">{slide.title}</span>
+                </h1>
+              ) : (
+                <h2 class="slide-title">
+                  <span class="script">{slide.script}</span>
+                  <span class="bold">{slide.title}</span>
+                </h2>
+              )}
+              <p class="plate">{slide.text}</p>
+              <div class="buttons">
+                <a class="btn btn--primary btn--lg" href={slide.primary.href}>
+                  {slide.primary.label}
+                </a>
+                {slide.secondary && (
+                  <a class="btn btn--lg" href={slide.secondary.href}>
+                    {slide.secondary.label}
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div class="arch-wrap">
+              <ProductImage
+                class="arch"
+                image={slide.image}
+                placeholder={slide.placeholder}
+                tint={slide.tint}
+                scale={1.5625}
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+              <img class="sparkle s1" src="/images/icons/sparkle-a.svg" alt="" width="26" height="26" />
+              <img class="sparkle s2" src="/images/icons/sparkle-b.svg" alt="" width="20" height="20" />
+              <img class="sparkle s3" src="/images/icons/sparkle-c.svg" alt="" width="30" height="30" />
+              <img class="sparkle s4" src="/images/icons/sparkle-d.svg" alt="" width="18" height="18" />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="controls">
+    <Lace scallop="var(--blush)" dot="var(--white)" />
+    <div class="container controls-inner">
+      <div class="tabs-row">
+        <button class="icon-btn" type="button" data-prev>
+          <img src="/images/icons/chevron-left.svg" alt="Previous slide" width="20" height="20" />
+        </button>
+        <div class="tabs" role="tablist" aria-label="Choose a slide">
+          {
+            slides.map((slide, i) => (
+              <button
+                class="chip"
+                type="button"
+                role="tab"
+                aria-controls={`slide-${i}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                data-tab
+              >
+                {slide.tab}
+              </button>
+            ))
+          }
+        </div>
+        <button class="icon-btn" type="button" data-next>
+          <img src="/images/icons/chevron-right.svg" alt="Next slide" width="20" height="20" />
+        </button>
+      </div>
+      <button class="pause" type="button" aria-pressed="false" data-pause>
+        <img src="/images/icons/pause.svg" alt="" width="14" height="14" />
+        <span data-pause-label>Pause slides</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const INTERVAL = 6000;
+
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((root) => {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const pause = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const pauseLabel = root.querySelector<HTMLElement>('[data-pause-label]')!;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let current = 0;
+    let paused = reduceMotion;
+    let timer: number | undefined;
+
+    const show = (index: number, focusTab = false) => {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => (s.hidden = i !== current));
+      tabs.forEach((t, i) => {
+        t.setAttribute('aria-selected', String(i === current));
+        t.tabIndex = i === current ? 0 : -1;
+      });
+      if (focusTab) tabs[current].focus();
+    };
+
+    const schedule = () => {
+      window.clearInterval(timer);
+      if (!paused) timer = window.setInterval(() => show(current + 1), INTERVAL);
+    };
+
+    const setPaused = (value: boolean) => {
+      paused = value;
+      pause.setAttribute('aria-pressed', String(value));
+      pauseLabel.textContent = value ? 'Play slides' : 'Pause slides';
+      schedule();
+    };
+
+    root.querySelector('[data-prev]')?.addEventListener('click', () => {
+      show(current - 1);
+      schedule();
+    });
+    root.querySelector('[data-next]')?.addEventListener('click', () => {
+      show(current + 1);
+      schedule();
+    });
+    tabs.forEach((tab, i) =>
+      tab.addEventListener('click', () => {
+        show(i);
+        schedule();
+      }),
+    );
+    root.querySelector('[role="tablist"]')?.addEventListener('keydown', (event) => {
+      const key = (event as KeyboardEvent).key;
+      if (key === 'ArrowRight') show(current + 1, true);
+      if (key === 'ArrowLeft') show(current - 1, true);
+    });
+    pause.addEventListener('click', () => setPaused(!paused));
+
+    // Stop moving while someone reads or uses the slider.
+    root.addEventListener('focusin', () => window.clearInterval(timer));
+    root.addEventListener('focusout', schedule);
+    root.addEventListener('mouseenter', () => window.clearInterval(timer));
+    root.addEventListener('mouseleave', schedule);
+
+    setPaused(paused);
+  });
+</script>
+
+<style>
+  .banner {
+    position: relative;
+  }
+
+  .banner-inner {
+    padding-top: 44px;
+    padding-bottom: 60px;
+  }
+
+  .slide {
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    animation: fade-in 0.4s ease;
+  }
+
+  .slide[hidden] {
+    display: none;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .slide-text {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .slide-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .counter {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .slide-title {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .slide-title .script {
+    font-size: 80px;
+  }
+
+  .slide-title .bold {
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.1;
+  }
+
+  .plate {
+    max-width: 516px;
+    padding: 14px 18px;
+    border-radius: 18px;
+    background: var(--white);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 6px;
+  }
+
+  .arch-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 440px;
+    height: 420px;
+  }
+
+  .arch-wrap :global(.arch) {
+    width: 100%;
+    height: 100%;
+    border: 10px solid var(--white);
+    border-radius: 210px 210px 28px 28px;
+    background-clip: padding-box;
+  }
+
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .s1 {
+    left: 84px;
+    top: 120px;
+  }
+
+  .s2 {
+    left: 330px;
+    top: 140px;
+  }
+
+  .s3 {
+    left: 320px;
+    top: 290px;
+  }
+
+  .s4 {
+    left: 80px;
+    top: 300px;
+  }
+
+  .controls {
+    background: var(--white);
+  }
+
+  .controls-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 16px;
+    padding-bottom: 20px;
+  }
+
+  .tabs-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px 12px 16px;
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .pause:hover {
+    background: var(--blush);
+  }
+
+  @media (max-width: 1100px) {
+    .slide {
+      gap: 40px;
+    }
+
+    .arch-wrap {
+      width: 360px;
+      height: 344px;
+    }
+
+    .s2,
+    .s3 {
+      left: auto;
+      right: 30px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .slide {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 24px;
+    }
+
+    .arch-wrap {
+      width: min(100%, 340px);
+      height: 300px;
+      margin-inline: auto;
+    }
+
+    .slide-title .script {
+      font-size: 60px;
+    }
+
+    .slide-title .bold {
+      font-size: 38px;
+    }
+
+    .tabs {
+      display: none;
+    }
+
+    .banner-inner {
+      padding-top: 24px;
+      padding-bottom: 40px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .slide-title .script {
+      font-size: 52px;
+    }
+
+    .slide-title .bold {
+      font-size: 32px;
+    }
+
+    .plate {
+      font-size: 16px;
+    }
+
+    .buttons .btn {
+      flex: 1 1 auto;
+    }
+  }
+</style>
