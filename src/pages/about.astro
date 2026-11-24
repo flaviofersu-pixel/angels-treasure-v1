@@ -1,0 +1,166 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Lace from '../components/Lace.astro';
+import Doily from '../components/Doily.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import CategoryGrid from '../components/CategoryGrid.astro';
+import StepCards from '../components/StepCards.astro';
+import PopUpList from '../components/PopUpList.astro';
+import WishSection from '../components/WishSection.astro';
+import { getPopUps } from '../lib/content';
+import { site } from '../data/site';
+
+const popUps = await getPopUps();
+
+const steps = [
+  { title: 'An idea pops up', text: 'A colour, a song or a random thought: that is where every piece starts.' },
+  { title: 'Made by hand', text: 'Beads, resin, lace and fabric, put together piece by piece.' },
+  { title: 'Packed with love', text: 'Wrapped gift-ready and shipped from the Netherlands.' },
+];
+---
+
+<Layout
+  title="About me"
+  description="Angel's Treasure makes jewellery, hair bows, charms and clothing for sweet and Jfashion coords, handmade by Sakura in Amsterdam."
+  footerLace="var(--petal)"
+>
+  <section class="intro">
+    <div class="container intro-inner">
+      <Doily />
+      <div class="story">
+        <p class="script hello" aria-hidden="true">Hey there!</p>
+        <h1 class="title">Little treasures, made by hand in Amsterdam</h1>
+        <p class="text">
+          Angel's Treasure makes jewellery, hair bows, charms and clothing for sweet and Jfashion coords. Some pieces are
+          one of a kind, others are made to order just for you.
+        </p>
+        <p class="text">Can't find what you're looking for? Make a wish and we'll create it together.</p>
+        <ul class="tags">
+          <li class="tag">Handmade in Amsterdam</li>
+          <li class="tag">Since July 2022</li>
+          <li class="tag">Customs are open</li>
+        </ul>
+        <div class="buttons">
+          <a class="btn btn--primary" href="/shop/">Shop all treasures</a>
+          <a class="btn" href={site.tiktok.url} target="_blank" rel="noopener">
+            Follow on TikTok <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="find" aria-labelledby="find-title">
+    <div class="container stack">
+      <SectionTitle id="find-title" script="Little treasures" title="What you will find" icon="bow" />
+      <CategoryGrid variant="detailed" />
+    </div>
+  </section>
+
+  <section class="care" aria-labelledby="care-title">
+    <Lace scallop="var(--white)" dot="var(--blush)" />
+    <div class="container stack">
+      <SectionTitle id="care-title" script="Made with care" title="From idea to treasure" icon="heart" />
+      <StepCards steps={steps} />
+    </div>
+  </section>
+
+  <PopUpList popUps={popUps} nextOnly laceColor="var(--blush)" titleIcon="bow" />
+  <WishSection variant="compact" laceColor="var(--white)" />
+</Layout>
+
+<style>
+  .intro {
+    background: var(--cream);
+  }
+
+  .intro-inner {
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    padding-top: 64px;
+    padding-bottom: 88px;
+  }
+
+  .story {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .hello {
+    font-size: 56px;
+    line-height: 1.1;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.25;
+  }
+
+  .text {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .tags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+  }
+
+  .find {
+    background: var(--white);
+  }
+
+  .care {
+    background: var(--blush);
+  }
+
+  @media (max-width: 1000px) {
+    .intro-inner {
+      flex-direction: column;
+      gap: 32px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .intro-inner,
+    .stack {
+      padding-top: 40px;
+      padding-bottom: 56px;
+    }
+
+    .hello {
+      font-size: 44px;
+    }
+
+    .title {
+      font-size: 26px;
+    }
+
+    .text {
+      font-size: 16px;
+    }
+  }
+</style>
