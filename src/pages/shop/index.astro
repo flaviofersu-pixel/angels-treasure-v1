@@ -1,0 +1,227 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Promises from '../../components/Promises.astro';
+import { categories } from '../../lib/catalog';
+import { getProducts } from '../../lib/content';
+
+const products = await getProducts();
+const filters = [{ id: 'all', label: 'All' }, { id: 'new', label: 'New' }, ...categories.map((c) => ({ id: c.id, label: c.label }))];
+const PAGE_SIZE = 8;
+---
+
+<Layout title="Shop" description="All handmade treasures: jewellery, hair bows, keychains, charms and clothing." footerLace="var(--blush)">
+  <section class="title pattern-gingham">
+    <div class="container title-inner">
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Shop' }]} />
+      <SectionTitle as="h1" script="All treasures" title="The sweet shop" icon="bow" plate size="lg" />
+      <p class="note">Every piece is handmade by Sakura in Amsterdam. Buy safely via Depop.</p>
+    </div>
+  </section>
+
+  <section class="products" aria-label="Products" data-shop data-page-size={PAGE_SIZE}>
+    <div class="container">
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Filter by category">
+          {
+            filters.map((f, i) => (
+              <button class="chip" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-filter={f.id}>
+                {f.label}
+              </button>
+            ))
+          }
+        </div>
+        <label class="sort">
+          <span class="visually-hidden">Sort products</span>
+          <select data-sort>
+            <option value="newest">Sort: newest first</option>
+            <option value="price-asc">Sort: price low to high</option>
+            <option value="price-desc">Sort: price high to low</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="visually-hidden" aria-live="polite" data-status></p>
+
+      <ul class="grid" data-grid>
+        {
+          products.map((product, i) => (
+            <li data-category={product.category} data-new={String(product.isNew)} data-price={product.price} data-order={i}>
+              <ProductCard product={product} />
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="empty" data-empty hidden>No treasures here yet. Have a look at the other categories, or make a wish!</p>
+
+      <div class="more">
+        <button class="btn" type="button" data-more hidden>Load more treasures</button>
+      </div>
+    </div>
+  </section>
+
+  <Promises />
+</Layout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-shop]');
+  if (root) {
+    const pageSize = Number(root.dataset.pageSize) || 8;
+    const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+    const items = [...grid.children] as HTMLElement[];
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const sort = root.querySelector<HTMLSelectElement>('[data-sort]')!;
+    const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+
+    let filter = new URLSearchParams(location.search).get('category') ?? 'all';
+    if (!buttons.some((b) => b.dataset.filter === filter)) filter = 'all';
+    let limit = pageSize;
+
+    const matches = (item: HTMLElement) =>
+      filter === 'all' || (filter === 'new' ? item.dataset.new === 'true' : item.dataset.category === filter);
+
+    const render = () => {
+      const sorted = [...items].sort((a, b) => {
+        if (sort.value === 'price-asc') return Number(a.dataset.price) - Number(b.dataset.price);
+        if (sort.value === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price);
+        return Number(a.dataset.order) - Number(b.dataset.order);
+      });
+      grid.append(...sorted);
+
+      const visible = sorted.filter(matches);
+      sorted.forEach((item) => (item.hidden = true));
+      visible.slice(0, limit).forEach((item) => (item.hidden = false));
+
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+      more.hidden = visible.length <= limit;
+      empty.hidden = visible.length > 0;
+      status.textContent = `${visible.length} treasures`;
+    };
+
+    buttons.forEach((button) =>
+      button.addEventListener('click', () => {
+        filter = button.dataset.filter ?? 'all';
+        limit = pageSize;
+        const url = new URL(location.href);
+        if (filter === 'all') url.searchParams.delete('category');
+        else url.searchParams.set('category', filter);
+        history.replaceState(null, '', url);
+        render();
+      }),
+    );
+    sort.addEventListener('change', render);
+    more.addEventListener('click', () => {
+      limit += pageSize;
+      render();
+    });
+
+    render();
+  }
+</script>
+
+<style>
+  .title-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-top: 40px;
+    padding-bottom: 48px;
+    text-align: center;
+  }
+
+  .note {
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .products {
+    padding: 40px 0 72px;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filters .chip {
+    padding-inline: 18px;
+  }
+
+  .sort select {
+    appearance: none;
+    padding: 11px 44px 11px 18px;
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-pill);
+    background: var(--white) url('/images/icons/chevron-down.svg') no-repeat right 18px center / 16px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px 26px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .grid > [hidden] {
+    display: none;
+  }
+
+  .empty {
+    padding: 32px 0;
+    text-align: center;
+    color: var(--soft);
+  }
+
+  .more {
+    display: flex;
+    justify-content: center;
+    padding-top: 36px;
+  }
+
+  @media (max-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+  }
+</style>
