@@ -280,23 +280,23 @@ import { slides } from '../../data/home';
   }
 
   .s1 {
-    left: 84px;
-    top: 120px;
+    left: 19%;
+    top: 29%;
   }
 
   .s2 {
-    left: 330px;
-    top: 140px;
+    left: 75%;
+    top: 33%;
   }
 
   .s3 {
-    left: 320px;
-    top: 290px;
+    left: 73%;
+    top: 69%;
   }
 
   .s4 {
-    left: 80px;
-    top: 300px;
+    left: 18%;
+    top: 71%;
   }
 
   .controls {
@@ -353,25 +353,41 @@ import { slides } from '../../data/home';
       width: 360px;
       height: 344px;
     }
-
-    .s2,
-    .s3 {
-      left: auto;
-      right: 30px;
-    }
   }
 
   @media (max-width: 860px) {
+    /* Phone order: label, photo, title, text, buttons. */
     .slide {
-      flex-direction: column-reverse;
+      flex-direction: column;
       align-items: stretch;
-      gap: 24px;
+      gap: 16px;
+    }
+
+    .slide-text {
+      display: contents;
+    }
+
+    .slide-meta {
+      order: 1;
     }
 
     .arch-wrap {
-      width: min(100%, 340px);
+      order: 2;
+      width: min(100%, 360px);
       height: 300px;
       margin-inline: auto;
+    }
+
+    .slide-title {
+      order: 3;
+    }
+
+    .plate {
+      order: 4;
+    }
+
+    .buttons {
+      order: 5;
     }
 
     .slide-title .script {
@@ -382,17 +398,37 @@ import { slides } from '../../data/home';
       font-size: 38px;
     }
 
-    .tabs {
-      display: none;
+    .banner-inner {
+      padding-top: 20px;
+      padding-bottom: 32px;
     }
 
-    .banner-inner {
-      padding-top: 24px;
-      padding-bottom: 40px;
+    .controls-inner {
+      padding-top: 12px;
+      padding-bottom: 14px;
+    }
+
+    .pause span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .pause {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      justify-content: center;
     }
   }
 
   @media (max-width: 640px) {
+    .arch-wrap {
+      height: 260px;
+    }
+
     .slide-title .script {
       font-size: 52px;
     }
@@ -402,11 +438,16 @@ import { slides } from '../../data/home';
     }
 
     .plate {
-      font-size: 16px;
+      font-size: 15px;
+    }
+
+    .buttons {
+      flex-direction: column;
+      gap: 10px;
     }
 
     .buttons .btn {
-      flex: 1 1 auto;
+      width: 100%;
     }
   }
 </style>
