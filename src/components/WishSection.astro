@@ -2,6 +2,7 @@
 // "Make a wish" block that points to custom orders.
 // `full` shows the three steps and price tags (home), `compact` only text and buttons (about).
 import Lace from './Lace.astro';
+import StepCards from './StepCards.astro';
 
 interface Props {
   variant?: 'full' | 'compact';
@@ -35,15 +36,9 @@ const priceTags = ['Jewellery € 5–60', 'Hair accessories € 5–50', 'Cloth
     {
       variant === 'full' && (
         <>
-          <ol class="steps">
-            {steps.map((step, i) => (
-              <li class="card step">
-                <span class="step-number">{i + 1}</span>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-              </li>
-            ))}
-          </ol>
+          <div class="steps">
+            <StepCards steps={steps} cardWidth={300} />
+          </div>
           <ul class="tags">
             {priceTags.map((tag) => (
               <li class="tag">{tag}</li>
@@ -89,31 +84,8 @@ const priceTags = ['Jewellery € 5–60', 'Hair accessories € 5–50', 'Cloth
   }
 
   .steps {
-    display: grid;
-    grid-template-columns: repeat(3, 300px);
-    gap: 20px;
-    margin: 0;
+    width: 100%;
     padding: 14px 0 6px;
-    list-style: none;
-    text-align: left;
-  }
-
-  .step {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px 22px 22px;
-  }
-
-  .step h3 {
-    font-weight: 700;
-    font-size: 20px;
-  }
-
-  .step p {
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--soft);
   }
 
   .tags {
@@ -128,13 +100,6 @@ const priceTags = ['Jewellery € 5–60', 'Hair accessories € 5–50', 'Cloth
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
-  }
-
-  @media (max-width: 1000px) {
-    .steps {
-      grid-template-columns: 1fr;
-      width: min(100%, 420px);
-    }
   }
 
   @media (max-width: 640px) {
