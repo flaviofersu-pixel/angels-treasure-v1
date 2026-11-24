@@ -1,0 +1,147 @@
+---
+import Lace from '../Lace.astro';
+import Doily from '../Doily.astro';
+import { site } from '../../data/site';
+---
+
+<section class="about" aria-labelledby="about-title">
+  <Lace scallop="var(--petal)" dot="var(--blush)" />
+  <div class="container content">
+    <Doily />
+    <div class="story">
+      <p class="script hello" aria-hidden="true">Hey there!</p>
+      <h2 id="about-title" class="title">I'm Sakura, the maker behind Angel's Treasure</h2>
+      <p class="text">
+        I make the things I couldn't find in shops: little treasures for Jfashion coords, made by hand in Amsterdam.
+      </p>
+      <figure class="quote">
+        <blockquote>"Sometimes a random idea just pops into my head."</blockquote>
+        <figcaption class="script">Sakura</figcaption>
+      </figure>
+      <ul class="tags">
+        <li class="tag">Handmade in Amsterdam</li>
+        <li class="tag">Since July 2022</li>
+        <li class="tag">Customs are open</li>
+      </ul>
+      <div class="buttons">
+        <a class="btn btn--primary" href="/about/">Read more</a>
+        <a class="btn" href={site.tiktok.url} target="_blank" rel="noopener">
+          Follow on TikTok <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    background: var(--blush);
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    padding-top: 64px;
+    padding-bottom: 88px;
+  }
+
+  .story {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .hello {
+    font-size: 56px;
+    line-height: 1.1;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.25;
+  }
+
+  .text {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .quote {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    margin: 0;
+    padding: 18px 22px 18px 39px;
+    border-radius: 20px;
+    background: var(--white);
+  }
+
+  .quote::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    left: 18px;
+    width: 5px;
+    border-radius: 3px;
+    background: var(--pink-d);
+  }
+
+  .quote blockquote {
+    margin: 0;
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .quote figcaption {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+
+  .tags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 1000px) {
+    .content {
+      flex-direction: column;
+      gap: 32px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .content {
+      padding-top: 40px;
+      padding-bottom: 56px;
+    }
+
+    .hello {
+      font-size: 44px;
+    }
+
+    .title {
+      font-size: 26px;
+    }
+
+    .text {
+      font-size: 16px;
+    }
+  }
+</style>
