@@ -1,0 +1,60 @@
+---
+// Product photo, or the matching illustration on a tinted tile
+// while Sakura has not uploaded a photo yet.
+import type { PlaceholderIcon, ProductImage, Tint } from '../lib/types';
+import { placeholderSize, tintColor } from '../lib/catalog';
+
+interface Props {
+  image?: ProductImage;
+  placeholder: PlaceholderIcon;
+  tint: Tint;
+  // Scale of the illustration relative to its size on a product card
+  scale?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { image, placeholder, tint, scale = 1, class: className, loading = 'lazy' } = Astro.props;
+const size = placeholderSize[placeholder];
+---
+
+<div class:list={['product-image', className]} style={{ '--tint': tintColor[tint] }}>
+  {
+    image ? (
+      <img class="photo" src={image.url} alt={image.alt} loading={loading} decoding="async" />
+    ) : (
+      <img
+        class="illustration"
+        src={`/images/placeholders/${placeholder}.svg`}
+        alt=""
+        width={Math.round(size.width * scale)}
+        height={Math.round(size.height * scale)}
+      />
+    )
+  }
+  <slot />
+</div>
+
+<style>
+  .product-image {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--tint);
+  }
+
+  .photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .illustration {
+    max-width: 60%;
+    height: auto;
+  }
+</style>

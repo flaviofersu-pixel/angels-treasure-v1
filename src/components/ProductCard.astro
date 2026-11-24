@@ -1,0 +1,133 @@
+---
+import type { Product } from '../lib/types';
+import { formatPrice } from '../lib/catalog';
+import { site } from '../data/site';
+import ProductImage from './ProductImage.astro';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const href = `/shop/${product.slug}/`;
+const depopUrl = product.depopUrl ?? site.depop.url;
+---
+
+<article class:list={['product-card', { 'is-sold-out': product.soldOut }]} data-category={product.category} data-new={product.isNew ? 'true' : undefined}>
+  <ProductImage class="tile" image={product.images[0]} placeholder={product.placeholder} tint={product.tint}>
+    {product.soldOut ? <span class="pill pill--dark label">Sold out</span> : product.isNew && <span class="pill label">New</span>}
+  </ProductImage>
+
+  <div class="info">
+    <h3 class="name"><a href={href}>{product.name}</a></h3>
+    <div class="meta">
+      <span class="kind">{product.kind}</span>
+      <span class="price">{formatPrice(product.price)}</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    {
+      product.soldOut ? (
+        <span class="btn btn--sm btn--block" aria-disabled="true">Sold out</span>
+      ) : (
+        <a class="btn btn--sm btn--block buy" href={depopUrl} target="_blank" rel="noopener">
+          Buy on Depop <span class="arrow" aria-hidden="true">↗</span>
+          <span class="visually-hidden">: {product.name} (opens Depop)</span>
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid var(--pink);
+    border-radius: 24px;
+    background: var(--white);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -14px rgb(169 70 119 / 0.45);
+  }
+
+  .product-card :global(.tile) {
+    aspect-ratio: 260 / 240;
+    border-radius: 18px;
+  }
+
+  .label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px 6px 0;
+  }
+
+  .name {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  /* Whole card is clickable through the product name link. */
+  .name a {
+    text-decoration: none;
+  }
+
+  .name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .kind {
+    font-size: 13px;
+    color: var(--soft);
+  }
+
+  .price {
+    font-weight: 700;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .actions {
+    padding-block: 2px;
+  }
+
+  .actions .btn {
+    position: relative;
+    z-index: 1;
+    font-size: 13px;
+  }
+
+  .is-sold-out .tile,
+  .is-sold-out .info {
+    opacity: 0.55;
+  }
+
+  .is-sold-out .label {
+    opacity: 1;
+  }
+</style>
