@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Lace from '../components/Lace.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import StepCards from '../components/StepCards.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { getProducts } from '../lib/content';
+import { site } from '../data/site';
+
+const products = (await getProducts()).filter((p) => !p.soldOut).slice(0, 4);
+
+const steps = [
+  { title: 'I read your wish', text: 'And look at your pictures and ideas.' },
+  { title: 'You get an estimate', text: 'With the design and the materials.' },
+  { title: 'Material costs first', text: 'Then I start making your treasure.' },
+];
+---
+
+<Layout title="Thank you" description="Your wish has been sent." footerLace="var(--cream)" noindex>
+  <section class="thanks">
+    <div class="container inner">
+      <img src="/images/icons/heart-glossy.svg" alt="" width="80" height="80" />
+      <h1>
+        <span class="script big">Thank you!</span>
+        <span class="title">Your wish has been sent</span>
+      </h1>
+      <p class="text">
+        I'll read your wish and reply by email within [invullen] days. Keep an eye on your inbox, and your spam folder
+        just in case.
+      </p>
+      <div class="steps">
+        <StepCards steps={steps} cardWidth={300} />
+      </div>
+      <div class="buttons">
+        <a class="btn btn--primary btn--lg" href="/shop/">Back to the shop</a>
+        <a class="btn btn--lg" href={site.instagram.url} target="_blank" rel="noopener">
+          Follow on Instagram <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wait" aria-labelledby="wait-title">
+    <Lace scallop="var(--petal)" dot="var(--cream)" />
+    <div class="container stack">
+      <SectionTitle id="wait-title" script="While you wait" title="New treasures" icon="bow" />
+      <ul class="grid">
+        {
+          products.map((product) => (
+            <li>
+              <ProductCard product={product} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .thanks {
+    background: var(--petal) url('/images/sparkles-bg.svg') no-repeat center top / 1440px auto;
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+    text-align: center;
+  }
+
+  h1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .big {
+    font-size: 88px;
+    line-height: 1.1;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.2;
+  }
+
+  .text {
+    max-width: 600px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .steps {
+    width: 100%;
+    padding: 12px 0 4px;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .wait {
+    background: var(--cream);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .big {
+      font-size: 64px;
+    }
+
+    .title {
+      font-size: 28px;
+    }
+
+    .text {
+      font-size: 16px;
+    }
+
+    .grid {
+      gap: 16px;
+    }
+  }
+</style>
