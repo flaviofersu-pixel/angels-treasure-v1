@@ -1,0 +1,84 @@
+---
+import type { Product } from '../../lib/types';
+import SectionTitle from '../SectionTitle.astro';
+import ProductTrack from '../ProductTrack.astro';
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+---
+
+<section class="new-releases" data-carousel aria-labelledby="new-releases-title">
+  <div class="awning" aria-hidden="true"></div>
+  <div class="content">
+    <SectionTitle id="new-releases-title" script="Just landed" title="New releases" icon="heart" />
+    <ProductTrack products={products} label="New releases" />
+    <div class="controls">
+      <button class="icon-btn" type="button" data-prev>
+        <img src="/images/icons/chevron-left.svg" alt="Previous products" width="20" height="20" />
+      </button>
+      <p class="count" data-count aria-live="polite">1–4 of {products.length}</p>
+      <button class="icon-btn" type="button" data-next>
+        <img src="/images/icons/chevron-right.svg" alt="Next products" width="20" height="20" />
+      </button>
+      <a class="btn btn--primary view-all" href="/shop/?category=new">View all new releases</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .new-releases {
+    background: var(--white);
+  }
+
+  .awning {
+    height: 62px;
+    background: url('/images/awning.svg') repeat-x left top / auto 62px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 0 64px;
+  }
+
+  .content > :global(.track) {
+    width: 100%;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 8px var(--gutter) 0;
+  }
+
+  .count {
+    min-width: 64px;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .view-all {
+    margin-left: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .awning {
+      height: 40px;
+      background-size: auto 40px;
+    }
+
+    .view-all {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
+  }
+</style>

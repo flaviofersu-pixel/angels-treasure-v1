@@ -217,6 +217,11 @@ textarea {
   background: var(--blush);
 }
 
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .icon-btn img {
   width: 20px;
   height: 20px;

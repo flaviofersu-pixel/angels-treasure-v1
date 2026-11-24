@@ -1,0 +1,97 @@
+---
+// Sideways-scrolling row of product cards. Place it inside an element with
+// `data-carousel`; buttons with `data-prev` / `data-next` and an element with
+// `data-count` inside that same element are wired up automatically.
+import type { Product } from '../lib/types';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  products: Product[];
+  label: string;
+}
+
+const { products, label } = Astro.props;
+---
+
+<ul class="track" data-track aria-label={label} tabindex="0">
+  {
+    products.map((product) => (
+      <li>
+        <ProductCard product={product} />
+      </li>
+    ))
+  }
+</ul>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    if (!track) return;
+    const items = [...track.children] as HTMLElement[];
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-next]');
+    const count = root.querySelector<HTMLElement>('[data-count]');
+
+    const step = () => {
+      const first = items[0];
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const visible = Math.max(1, Math.floor((track.clientWidth + gap) / (first.offsetWidth + gap)));
+      return { size: first.offsetWidth + gap, visible };
+    };
+
+    const update = () => {
+      const { size, visible } = step();
+      const start = Math.round(track.scrollLeft / size);
+      const end = Math.min(items.length, start + visible);
+      if (count) count.textContent = `${start + 1}–${end} of ${items.length}`;
+      if (prev) prev.disabled = track.scrollLeft <= 2;
+      if (next) next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    };
+
+    const move = (direction: number) => {
+      const { size, visible } = step();
+      track.scrollBy({ left: direction * size * visible, behavior: 'smooth' });
+    };
+
+    prev?.addEventListener('click', () => move(-1));
+    next?.addEventListener('click', () => move(1));
+    track.addEventListener('scroll', () => window.requestAnimationFrame(update), { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  });
+</script>
+
+<style>
+  .track {
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    /* Line up with the page content, but let cards scroll to the screen edge. */
+    --edge: max(var(--gutter), calc((100% - var(--content-max)) / 2));
+    padding: 8px var(--edge);
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--edge);
+    scrollbar-width: none;
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .track > li {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+  }
+
+  @media (max-width: 640px) {
+    .track {
+      gap: 16px;
+    }
+
+    .track > li {
+      flex-basis: 240px;
+    }
+  }
+</style>
