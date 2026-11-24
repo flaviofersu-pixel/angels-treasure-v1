@@ -1,0 +1,139 @@
+/* Design tokens from the Figma file (version 4, "strawberry & cream"). */
+:root {
+  --cocoa: #5b3530;
+  --soft: #7d5650;
+  --rose: #a94677;
+  --pink: #f5c3d5;
+  --pink-d: #e9a3bf;
+  --petal: #f9dbe6;
+  --blush: #fdeef3;
+  --cream: #fffbfc;
+  --butter-l: #fff6de;
+  --white: #ffffff;
+
+  --font-script: 'Pinyon Script', cursive;
+  --font-body: 'Zen Maru Gothic', system-ui, sans-serif;
+
+  --radius-pill: 999px;
+  --gutter: 120px;
+  --content-max: 1200px;
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --gutter: 48px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 20px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--cocoa);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Centered content column with the design's side padding. */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Script + bold heading pair used above most sections. */
+.script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  color: var(--rose);
+  line-height: 1.15;
+}
+
+/* Background patterns, rebuilt in CSS instead of large SVG files. */
+.pattern-dots {
+  background-color: var(--blush);
+  background-image:
+    radial-gradient(circle, rgb(255 255 255 / 0.95) 4px, transparent 4.5px),
+    radial-gradient(circle, rgb(255 255 255 / 0.95) 4px, transparent 4.5px);
+  background-size: 72px 72px;
+  background-position: -18px -18px, 18px 18px;
+}
+
+.pattern-gingham {
+  background-color: var(--white);
+  background-image:
+    linear-gradient(90deg, rgb(245 195 213 / 0.3) 50%, transparent 50%),
+    linear-gradient(rgb(245 195 213 / 0.3) 50%, transparent 50%);
+  background-size: 28px 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
