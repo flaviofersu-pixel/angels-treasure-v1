@@ -122,7 +122,10 @@ import { slides } from '../../data/home';
 
     const show = (index: number, focusTab = false) => {
       current = (index + slides.length) % slides.length;
-      slides.forEach((s, i) => (s.hidden = i !== current));
+      slides.forEach((s, i) => {
+        s.hidden = i !== current;
+        s.classList.toggle('fade', i === current);
+      });
       tabs.forEach((t, i) => {
         t.setAttribute('aria-selected', String(i === current));
         t.tabIndex = i === current ? 0 : -1;
@@ -187,6 +190,9 @@ import { slides } from '../../data/home';
     display: flex;
     align-items: center;
     gap: 72px;
+  }
+
+  .slide.fade {
     animation: fade-in 0.4s ease;
   }
 
