@@ -16,7 +16,7 @@ const steps = [
 ];
 ---
 
-<Layout title="Thank you" description="Your wish has been sent." footerLace="var(--cream)" noindex>
+<Layout title="Thank you" description="Your wish has been sent." footerLace="var(--white)" noindex>
   <section class="thanks">
     <div class="container inner">
       <img src="/images/icons/heart-glossy.svg" alt="" width="80" height="80" />
@@ -29,7 +29,7 @@ const steps = [
         just in case.
       </p>
       <div class="steps">
-        <StepCards steps={steps} cardWidth={300} />
+        <StepCards steps={steps} cardWidth={230} />
       </div>
       <div class="buttons">
         <a class="btn btn--primary btn--lg" href="/shop/">Back to the shop</a>
@@ -41,9 +41,9 @@ const steps = [
   </section>
 
   <section class="wait" aria-labelledby="wait-title">
-    <Lace scallop="var(--petal)" dot="var(--cream)" />
+    <Lace scallop="var(--petal)" dot="var(--white)" />
     <div class="container stack">
-      <SectionTitle id="wait-title" script="While you wait" title="New treasures" icon="bow" />
+      <SectionTitle id="wait-title" script="While you wait" title="New treasures" icon="bow" align="left" />
       <ul class="grid">
         {
           products.map((product) => (
@@ -110,15 +110,15 @@ const steps = [
   }
 
   .wait {
-    background: var(--cream);
+    background: var(--white);
   }
 
   .stack {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 32px;
-    padding-top: 56px;
+    align-items: flex-start;
+    gap: 28px;
+    padding-top: 48px;
     padding-bottom: 72px;
   }
 
