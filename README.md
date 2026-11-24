@@ -1,46 +1,50 @@
-# Astro Starter Kit: Basics
+# Angel's Treasure
+
+Website for Angel's Treasure, a small handmade Jfashion shop from Amsterdam.
+Built with [Astro](https://astro.build) as a static site. Products and pop-ups come from Sanity.
+
+## Getting started
+
+Requires Node 22 (see `.nvmrc`).
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # static site in ./dist
+npm run preview   # preview the build
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Without a `.env` the site uses the sample products in `src/data/sample-products.ts`.
+To use real content, copy `.env.example` to `.env` and fill in the Sanity project id.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Project structure
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+public/images/        logo, icons and illustrations from the design
+src/components/       header, footer, product card, sections
+src/data/             shop settings, home slider texts, sample content
+src/layouts/          page layout (fonts, meta tags, header, footer)
+src/lib/              types, categories, content loading (Sanity or sample data)
+src/pages/            home, shop, product pages, about, custom orders, thank you, terms
+src/styles/global.css design tokens and shared styles
+studio/               Sanity Studio where Sakura manages products (see studio/README.md)
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Pages
 
-## 🧞 Commands
+| Page | Path |
+| --- | --- |
+| Home | `/` |
+| Shop (filter with `?category=new`, `jewellery`, `hair`, `keychains`, `clothing`) | `/shop/` |
+| Product | `/shop/<slug>/` |
+| About me | `/about/` |
+| Custom orders | `/custom-orders/` |
+| Thank you (after the wish form) | `/thank-you/` |
+| Terms & privacy | `/terms/` |
 
-All commands are run from the root of the project, from a terminal:
+## Still to do
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Sanity project on Sakura's account, then set `SANITY_PROJECT_ID`.
+- `/api/wish` endpoint for the custom order form (Cloudflare Worker + Resend, see ADR 0007).
+- Hosting on Cloudflare on Sakura's account, and `site` in `astro.config.mjs` once the domain is known.
+- Fill in the `[invullen]` placeholders (delivery times, shipping costs, KvK number).
