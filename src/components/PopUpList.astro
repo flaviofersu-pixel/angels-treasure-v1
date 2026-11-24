@@ -1,0 +1,197 @@
+---
+import type { PopUp } from '../lib/types';
+import Lace from './Lace.astro';
+import SectionTitle from './SectionTitle.astro';
+
+interface Props {
+  popUps: PopUp[];
+  // Only show the next upcoming pop-up (about page)
+  nextOnly?: boolean;
+  laceColor?: string;
+  titleIcon?: 'heart' | 'bow';
+}
+
+const { popUps, nextOnly = false, laceColor = 'var(--blush)', titleIcon = 'heart' } = Astro.props;
+
+// Note: "past" is decided when the site is built.
+const now = Date.now();
+const upcoming = popUps.filter((p) => Date.parse(p.date) >= now).sort((a, b) => a.date.localeCompare(b.date));
+const past = popUps.filter((p) => Date.parse(p.date) < now);
+const list = nextOnly ? upcoming.slice(0, 1) : [...upcoming, ...past];
+
+const part = (date: string, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Amsterdam', ...options }).format(new Date(date));
+
+// Calendar file for "Add to calendar", as a data URL so it works on a static site.
+const icsLink = (p: PopUp) => {
+  const day = part(p.date, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('');
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    "PRODID:-//Angel's Treasure//Pop-ups//EN",
+    'BEGIN:VEVENT',
+    `UID:${day}-${p.name.replace(/\W+/g, '-').toLowerCase()}@angels-treasure`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+    `DTSTART;VALUE=DATE:${day}`,
+    `SUMMARY:${p.name}`,
+    `LOCATION:${p.address}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join('\r\n'))}`;
+};
+---
+
+<section class="pop-ups pattern-gingham" id="pop-ups" aria-labelledby="pop-ups-title">
+  <Lace scallop={laceColor} dot="var(--white)" />
+  <div class="container content">
+    <SectionTitle
+      id="pop-ups-title"
+      script="Come say hi"
+      title={nextOnly ? 'Next pop-up' : 'Pop-ups & markets'}
+      icon={titleIcon}
+      align="left"
+      plate
+    />
+
+    {
+      list.length === 0 && (
+        <p class="card empty">No pop-ups planned right now. Follow me on Instagram or TikTok to hear about the next one!</p>
+      )
+    }
+
+    <ul class="events">
+      {
+        list.map((p) => {
+          const isPast = Date.parse(p.date) < now;
+          return (
+            <li class:list={['event', { 'is-past': isPast }]}>
+              <time class="date" datetime={p.date}>
+                <span class="month">{part(p.date, { month: 'short' }).toUpperCase()}</span>
+                <span class="day">{part(p.date, { day: 'numeric' })}</span>
+                <span class="weekday">{part(p.date, { weekday: 'short' }).toUpperCase()}</span>
+              </time>
+              <div class="details">
+                <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
+                <p>{isPast ? `Past event · ${p.address}` : [p.time, p.address].filter(Boolean).join(' · ')}</p>
+              </div>
+              {!isPast && (
+                <a class="btn btn--primary btn--sm" href={icsLink(p)} download={`${p.name}.ics`}>
+                  Add to calendar
+                </a>
+              )}
+              {isPast && p.photosUrl && (
+                <a class="btn btn--sm" href={p.photosUrl} target="_blank" rel="noopener">
+                  See photos
+                </a>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: calc(1040px + 2 * var(--gutter));
+    padding-top: 56px;
+    padding-bottom: 72px;
+  }
+
+  .events {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .event {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 22px 14px 14px;
+    border: 2px solid var(--pink);
+    border-radius: 24px;
+    background: var(--white);
+  }
+
+  .event.is-past {
+    border: 1.5px dashed var(--pink-d);
+  }
+
+  .date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 76px;
+    padding: 8px 0 10px;
+    border-radius: 18px;
+    background: var(--pink);
+    white-space: nowrap;
+  }
+
+  .is-past .date {
+    background: var(--cream);
+  }
+
+  .month {
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.44px;
+  }
+
+  .day {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.15;
+  }
+
+  .weekday {
+    font-size: 12px;
+  }
+
+  .details {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .details h3 {
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .details p {
+    font-size: 15px;
+    color: var(--soft);
+  }
+
+  .empty {
+    padding: 20px 24px;
+  }
+
+  @media (max-width: 640px) {
+    .event {
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .details h3 {
+      font-size: 17px;
+    }
+
+    .event .btn {
+      margin-left: 90px;
+    }
+  }
+</style>

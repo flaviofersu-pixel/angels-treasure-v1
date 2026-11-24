@@ -1,8 +1,48 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Lace from '../components/Lace.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import CategoryGrid from '../components/CategoryGrid.astro';
+import WishSection from '../components/WishSection.astro';
+import PopUpList from '../components/PopUpList.astro';
 import HeroSlider from '../components/home/HeroSlider.astro';
+import NewReleases from '../components/home/NewReleases.astro';
+import AboutTeaser from '../components/home/AboutTeaser.astro';
+import { getPopUps, getProducts } from '../lib/content';
+
+const products = await getProducts();
+const newest = products.filter((p) => !p.soldOut).slice(0, 8);
+const popUps = await getPopUps();
 ---
 
 <Layout>
   <HeroSlider />
+  <NewReleases products={newest} />
+
+  <section class="categories" aria-labelledby="categories-title">
+    <Lace scallop="var(--white)" dot="var(--cream)" />
+    <div class="container categories-inner">
+      <SectionTitle id="categories-title" script="Pick your treat" title="Shop by category" icon="bow" />
+      <CategoryGrid />
+    </div>
+  </section>
+
+  <WishSection laceColor="var(--cream)" />
+  <AboutTeaser />
+  <PopUpList popUps={popUps} />
 </Layout>
+
+<style>
+  .categories {
+    background: var(--cream);
+  }
+
+  .categories-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+  }
+</style>
