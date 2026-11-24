@@ -1,0 +1,159 @@
+---
+// "Make a wish" block that points to custom orders.
+// `full` shows the three steps and price tags (home), `compact` only text and buttons (about).
+import Lace from './Lace.astro';
+
+interface Props {
+  variant?: 'full' | 'compact';
+  laceColor?: string;
+}
+
+const { variant = 'full', laceColor = 'var(--cream)' } = Astro.props;
+
+const steps = [
+  { title: 'Tell me your idea', text: 'Colours, theme, pictures: anything helps.' },
+  { title: 'We pick the materials', text: 'You get an estimate first.' },
+  { title: 'I make your treasure', text: 'Material costs are paid before I start.' },
+];
+
+const priceTags = ['Jewellery € 5–60', 'Hair accessories € 5–50', 'Clothing from € 25'];
+---
+
+<section class="wish" aria-labelledby="wish-title">
+  <Lace scallop={laceColor} dot="var(--petal)" />
+  <div class="container content">
+    <img class="star" src="/images/wish-star.svg" alt="" width="150" height="129" />
+    <h2 id="wish-title" class="script title">Make a wish</h2>
+    {
+      variant === 'full' ? (
+        <p class="intro">Dream it up and I'll make it: a one-of-a-kind treasure, just for you.</p>
+      ) : (
+        <p class="intro">Your own colours, theme or size? Tell me your idea and I make it for you.</p>
+      )
+    }
+
+    {
+      variant === 'full' && (
+        <>
+          <ol class="steps">
+            {steps.map((step, i) => (
+              <li class="card step">
+                <span class="step-number">{i + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <ul class="tags">
+            {priceTags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+
+    <div class="buttons">
+      <a class="btn btn--primary btn--lg" href="/custom-orders/#wish-form">Make a wish</a>
+      {variant === 'compact' && <a class="btn btn--lg" href="/custom-orders/#prices">See prices</a>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .wish {
+    position: relative;
+    overflow: hidden;
+    background: var(--petal) url('/images/sparkles-bg.svg') no-repeat center top / 1440px auto;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-top: 56px;
+    padding-bottom: 72px;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 80px;
+    line-height: 1.1;
+  }
+
+  .intro {
+    max-width: 560px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 300px);
+    gap: 20px;
+    margin: 0;
+    padding: 14px 0 6px;
+    list-style: none;
+    text-align: left;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 22px 22px;
+  }
+
+  .step h3 {
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .step p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--soft);
+  }
+
+  .tags {
+    justify-content: center;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+  }
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  @media (max-width: 1000px) {
+    .steps {
+      grid-template-columns: 1fr;
+      width: min(100%, 420px);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .content {
+      padding-top: 40px;
+      padding-bottom: 56px;
+    }
+
+    .star {
+      width: 110px;
+      height: auto;
+    }
+
+    .title {
+      font-size: 60px;
+    }
+
+    .intro {
+      font-size: 16px;
+    }
+  }
+</style>
