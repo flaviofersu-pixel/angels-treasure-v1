@@ -21,10 +21,10 @@ const size = placeholderSize[placeholder];
 <div class:list={['product-image', className]} style={{ '--tint': tintColor[tint] }}>
   {
     image ? (
-      <img class="photo" src={image.url} alt={image.alt} loading={loading} decoding="async" />
+      <img class="pi-photo" src={image.url} alt={image.alt} loading={loading} decoding="async" />
     ) : (
       <img
-        class="illustration"
+        class="pi-illustration"
         src={`/images/placeholders/${placeholder}.svg`}
         alt=""
         width={Math.round(size.width * scale)}
@@ -45,7 +45,7 @@ const size = placeholderSize[placeholder];
     background: var(--tint);
   }
 
-  .photo {
+  .pi-photo {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -53,7 +53,7 @@ const size = placeholderSize[placeholder];
     object-fit: cover;
   }
 
-  .illustration {
+  .pi-illustration {
     max-width: 60%;
     height: auto;
   }

@@ -1,0 +1,155 @@
+---
+// Four category cards with an arched illustration.
+// `variant="detailed"` adds a short description (about page).
+import { categories } from '../lib/catalog';
+import ProductImage from './ProductImage.astro';
+
+interface Props {
+  variant?: 'simple' | 'detailed';
+}
+
+const { variant = 'simple' } = Astro.props;
+---
+
+<ul class:list={['categories', variant]}>
+  {
+    categories.map((category) => (
+      <li class="category">
+        <ProductImage
+          class="photo"
+          placeholder={category.placeholder}
+          tint={variant === 'detailed' ? 'blush' : category.tint}
+          scale={0.93}
+        />
+        <div class="text">
+          <h3 class="name">
+            <a href={`/shop/?category=${category.id}`}>{category.label}</a>
+          </h3>
+          {variant === 'detailed' && <p class="description">{category.description}</p>}
+          <span class="shop" aria-hidden="true">
+            Shop →
+          </span>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .categories {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .category {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    border: 2px solid var(--pink);
+    border-radius: 28px;
+    background: var(--white);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .category:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -14px rgb(169 70 119 / 0.45);
+  }
+
+  .category :global(.photo) {
+    height: 230px;
+    border-radius: 115px 115px 20px 20px;
+  }
+
+  .detailed .category :global(.photo) {
+    height: 200px;
+    border-radius: 20px;
+  }
+
+  .text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 8px 6px;
+    font-weight: 700;
+  }
+
+  .detailed .text {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .name {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .name a {
+    text-decoration: none;
+  }
+
+  .name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+  }
+
+  .description {
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--soft);
+  }
+
+  .shop {
+    font-size: 14px;
+    color: var(--rose);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1000px) {
+    .categories {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .categories {
+      gap: 14px;
+    }
+
+    .category {
+      padding: 8px;
+      border-radius: 22px;
+    }
+
+    .category :global(.photo),
+    .detailed .category :global(.photo) {
+      height: 140px;
+      border-radius: 70px 70px 14px 14px;
+    }
+
+    .text {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .name {
+      font-size: 15px;
+    }
+
+    .description {
+      display: none;
+    }
+  }
+</style>
